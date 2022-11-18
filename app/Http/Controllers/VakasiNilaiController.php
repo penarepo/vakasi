@@ -27,6 +27,9 @@ class VakasiNilaiController extends Controller
     {
         $this->validate($request, [
             'file' => 'required|mimes:csv,xls,xlsx'
+        ], [
+            'file.required' => 'File wajib diisi.',
+            'file.mimes' => 'Format file harus csv,xls atau xlsx.'
         ]);
 
         VakasiNilai::whereNotNull('id')->delete();
@@ -39,22 +42,22 @@ class VakasiNilaiController extends Controller
 
         Excel::import(new VakasiNilaiImport, public_path('/vakasi_nilai/' . $nama_file));
 
-        Session::flash('sukses', 'Data Siswa Berhasil Diimport!');
+        Session::flash('sukses', 'Data Nilai Berhasil Diimport!');
 
         return redirect('/');
     }
 
     public function getVakasiNilai(Request $request)
     {
-        $data = VakasiNilai::select('dosen_pengajar', 'nip')
-            ->groupBy('dosen_pengajar', 'nip')
+        $data = VakasiNilai::select('dosen_pengajar', 'nip', 'nidn')
+            ->groupBy('dosen_pengajar', 'nip', 'nidn')
             ->get();
 
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $rows = '<div class="text-center align-middle center"><a href="javascript:;" id="btnDetail" class="btn btn-sm btn-success btn-style rounded" data="' . $row['nip'] . '">Detail</a> <a href="/cetak-vakasi-nilai/' . $row['nip'] . '" id="btnDetail" class="btn btn-sm btn-primary btn-style rounded">Cetak</a></div>';
+                    $rows = '<div class="text-center align-middle center"><a href="javascript:;" id="btnDetail" class="btn btn-sm btn-success btn-style rounded" data="' . $row['nip'] . '">Detail</a> <a href="/cetak-vakasi-nilai/' . $row['nip'] . '" id="btnCetak" target="_blank" class="btn btn-sm btn-primary btn-style rounded">Cetak</a></div>';
                     return $rows;
                 })
                 ->rawColumns(['action'])
@@ -75,7 +78,7 @@ class VakasiNilaiController extends Controller
 
     public function cetakVakasiNilai($id)
     {
-        $vakasi = VakasiNilai::selectRaw('nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, date_add(tgl_uts ,interval 14 day) as batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status')
+        $vakasi = VakasiNilai::selectRaw('nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, date_add(tgl_uts ,interval 14 day) as batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->orderBy('nama_mk')
@@ -89,12 +92,13 @@ class VakasiNilaiController extends Controller
             ->where('nip', $id)
             ->first();
 
+        $total = [];
         foreach ($vakasi as $item) {
-            if ($item->tgl_uts <= $item->tgl_pengisian_nilai) {
-                if ($item->tgl_pengisian_nilai <= $item->batas_upload) {
-                    $total[] = ($item->jumlah_peserta_kelas * $setting_vakasi->bonus) + $setting_vakasi->honor_soal + $setting_vakasi->honor_pengawas;
+            if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai']) {
+                if ($item['tgl_pengisian_nilai'] <= $item['batas_upload']) {
+                    $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->bonus) + $setting_vakasi->honor_soal + $setting_vakasi->honor_pengawas;
                 } else {
-                    $total[] = ($item->jumlah_peserta_kelas * $setting_vakasi->bonus_lewat) + $setting_vakasi->honor_soal + $setting_vakasi->honor_pengawas;
+                    $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->bonus_lewat) + $setting_vakasi->honor_soal + $setting_vakasi->honor_pengawas;
                 }
             } else {
                 $total[] = 0;

@@ -22,6 +22,10 @@ $(document).ready(function () {
                     name: 'DT_RowIndex'
                 },
                 {
+                    data: 'nidn',
+                    name: 'nidn'
+                },
+                {
                     data: 'dosen_pengajar',
                     name: 'dosen_pengajar'
                 },

@@ -85,73 +85,49 @@
                 <th>Status</th>
                 <th>Honor</th>
                 <th>Jumlah</th>
+                <th>Jumlah Total</th>
             </tr>
         </thead>
         <tbody>
+            @if (count($vakasi) != 0)
             @foreach ($vakasi as $item)
             <tr class="text-center">
-                <td>{{ $item->nama_mk }} - {{ $item->nama_kelas }}</td>
-                <td>{{ $item->jumlah_peserta_kelas }}</td>
-                <td>{{ date('d-m-Y', strtotime($item->tgl_uts)) }}</td>
-                <td>{{ date('d-m-Y', strtotime($item->tgl_uts . ' + 14 days')) }}</td>
-                <td>{{ date('d-m-Y', strtotime($item->tgl_pengisian_nilai)) }}</td>
+                <td>{{ $item['nama_mk'] }} - {{ $item['nama_kelas'] }}</td>
+                <td>{{ $item['jumlah_peserta_kelas'] }}</td>
+                <td>{{ date('d-m-Y', strtotime($item['tgl_uts'])) }}</td>
+                <td>{{ date('d-m-Y', strtotime($item['tgl_uts'] . ' + 14 days')) }}</td>
+                <td>{{ date('d-m-Y', strtotime($item['tgl_pengisian_nilai'])) }}</td>
 
-                @if ($item->tgl_uts <= $item->tgl_pengisian_nilai)
-                    @if ($item->tgl_pengisian_nilai <= $item->batas_upload)
+                @if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'])
+                    @if ($item['tgl_pengisian_nilai'] <= $item['batas_upload'])
                             <td>Tepat</td>
                             <td>Rp {{ number_format($setting->bonus,0,',','.') }}</td>
-                            <td>Rp {{ number_format($item->jumlah_peserta_kelas * $setting->bonus,0,',','.') }}</td>
+                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->bonus,0,',','.') }}</td>
+                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->bonus + $setting->honor_soal + $setting->honor_pengawas ,0,',','.') }}</td>
                         @else
                             <td>Terlambat</td>
-                            <td>Rp {{ number_format($setting->bonus,0,',','.') }}</td>
-                            <td>Rp {{ number_format($item->jumlah_peserta_kelas * $setting->bonus_lewat,0,',','.') }}</td>
+                            <td>Rp {{ number_format($setting->bonus_lewat,0,',','.') }}</td>
+                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->bonus_lewat,0,',','.') }}</td>
+                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->bonus_lewat + $setting->honor_soal + $setting->honor_pengawas ,0,',','.') }}</td>
                         @endif
                 @else
                     <td>Belum Upload</td>
                     <td>Rp 0</td>
                     <td>Rp 0</td>
-                @endif
-
-            </tr>
-            <tr class="text-center">
-                @if ($item->tgl_uts <= $item->tgl_pengisian_nilai)
-                    @if ($item->tgl_pengisian_nilai <= $item->batas_upload)
-                    <td>Vakasi Soal</td>
-                    <td colspan="6"></td>
-                    <td>Rp {{ number_format($setting->honor_soal,0,',','.') }}</td>
-                        @else
-                        <td>Vakasi Soal</td>
-                        <td colspan="6"></td>
-                        <td>Rp {{ number_format($setting->honor_soal,0,',','.') }}</td>
-                        @endif
-                @else
-                <td>Vakasi Soal</td>
-                <td colspan="6"></td>
-                <td>Rp 0</td>
-                @endif
-            </tr>
-            <tr class="text-center">
-                @if ($item->tgl_uts <= $item->tgl_pengisian_nilai)
-                    @if ($item->tgl_pengisian_nilai <= $item->batas_upload)
-                    <td>Transport Pengawas</td>
-                    <td colspan="6"></td>
-                    <td>Rp {{ number_format($setting->honor_pengawas,0,',','.') }}</td>
-                        @else
-                        <td>Transport Pengawas</td>
-                        <td colspan="6"></td>
-                        <td>Rp {{ number_format($setting->honor_pengawas,0,',','.') }}</td>
-                        @endif
-                @else
-                <td>Transport Pengawas</td>
-                <td colspan="6"></td>
-                <td>Rp 0</td>
+                    <td>Rp 0</td>
                 @endif
             </tr>
             @endforeach
             <tr class="text-center">
-                <td colspan="7"><b>Total</b></td>
+                <td colspan="8"><b>Total</b></td>
                 <td><b>Rp {{ number_format($total,0,',','.') }}</b></td>
             </tr>
+                  
+            @else
+            <tr class="text-center">
+                <td colspan="9"><b>Belum Upload Nilai</b></td>
+            </tr> 
+            @endif
         </tbody>
     </table>
     <br>
