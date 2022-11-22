@@ -19,7 +19,6 @@
 </head>
 
 <body>
-
     <div class="container" style="margin-top:30px;">
         <h1 class="text-center">
             Cetak Vakasi Nilai Ujian
@@ -55,9 +54,11 @@
                     <thead>
                         <tr class="text-center">
                             <th>No</th>
-                            <th>ID</th>
-                            <th>Prodi</th>
-                            <th>Nama Dosen</th>
+                            <th>Kode MK</th>
+                            <th>Nama MK</th>
+                            <th>Kelas</th>
+                            <th>Dosen</th>
+                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -105,30 +106,21 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama MK</th>
-                                <th>Jumlah Mhs</th>
-                                <th>Tgl Ujian</th>
-                                <th>Batas Upload</th>
-                                <th>Tgl Upload</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="list_mk"></tbody>
-                    </table>
+                    <form method="POST" action="/update-kelas/">
+                    {{ csrf_field() }}
+                    @method('PUT')
+                        <div id="list_mk"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Cetak</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <script src="{{ asset('/assets/js/vakasi.js') }}"></script>
+    <script src="{{ asset('/assets/js/datakelas.js') }}"></script>
 
 </body>
 

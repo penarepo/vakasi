@@ -17,5 +17,6 @@ class SettingVakasi extends Model
         'honor_pengawas',
         'bonus',
         'bonus_lewat',
+        'honor_pembuat_soal',
     ];
 }

@@ -30,11 +30,6 @@
     <br>
     <br>
     <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
     <h4 class="text-center">BUKTI PENGAMBILAN VAKASI SOAL DAN KOREKSI NILAI</h4>
     <h4 class="text-center">UJIAN TENGAH SEMESTER</h4>
     <br>
@@ -49,42 +44,54 @@
             <td>{{ $setting->semester }}</td>
         </tr>
         <tr>
-            <td><b>Vakasi Soal</b></td>
+            <!-- <td><b>Vakasi Soal</b></td>
             <td>:</td>
-            <td>Rp {{ number_format($setting->honor_soal,0,',','.') }}</td>
-            <td><b>Program Studi</b></td>
+            <td>Rp {{ number_format($setting->honor_soal,0,',','.') }}</td> -->
+            <!-- <td><b>Program Studi</b></td>
             <td>:</td>
-            <td>{{ $setting->prodi }}</td>
-        </tr>
-        <tr>
-            <td><b>Transport Pengawas</b></td>
+            <td>{{ $setting->prodi }}</td> -->
+            <td><b>Nama Dosen</b></td>
             <td>:</td>
-            <td>Rp {{ number_format($setting->honor_pengawas,0,',','.') }}</td>
+            <td>{{ $data_dosen->dosen_pengajar }}</td>
             <td><b>Program</b></td>
             <td>:</td>
             <td>{{ $setting->program }}</td>
         </tr>
-        <tr>
+        <!-- <tr>
+            <td><b>Nama Dosen</b></td>
+            <td>:</td>
+            <td>{{ $data_dosen->dosen_pengajar }}</td> -->
+            <!-- <td><b>Honor Pembuat Soal</b></td>
+            <td>:</td>
+            <td>Rp {{ number_format($setting->honor_pengawas,0,',','.') }}</td>
+            <td><b>Program</b></td>
+            <td>:</td>
+            <td>{{ $setting->program }}</td> -->
+        <!-- </tr> -->
+        <!-- <tr>
             <td><b>Jumlah</b></td>
             <td>:</td>
             <td>Rp {{ number_format($setting->honor_soal + $setting->honor_pengawas ,0,',','.') }}</td>
             <td><b>Nama Dosen</b></td>
             <td>:</td>
             <td>{{ $data_dosen->dosen_pengajar }}</td>
-        </tr>
+        </tr> -->
     </table>
 
     <table class="table table-striped table-sm mt-4">
         <thead>
             <tr class="table-primary text-center">
+                <th>Kode MK</th>
                 <th>Nama Mata Kuliah</th>
+                <th>Kelas</th>
                 <th>Jumlah Mhs</th>
-                <th>Tgl Ujian</th>
-                <th>Batas Upload</th>
-                <th>Tgl Upload</th>
+                <!-- <th>Tgl Ujian</th> -->
+                <!-- <th>Batas Upload</th> -->
+                <!-- <th>Tgl Upload</th> -->
                 <th>Status</th>
-                <th>Honor</th>
-                <th>Jumlah</th>
+                <th>Honor Pembuatan Soal</th>
+                <th>Honor Tepat Mengajar</th>
+                <th>Honor Periksa Jawaban</th>
                 <th>Jumlah Total</th>
             </tr>
         </thead>
@@ -92,26 +99,31 @@
             @if (count($vakasi) != 0)
             @foreach ($vakasi as $item)
             <tr class="text-center">
-                <td>{{ $item['nama_mk'] }} - {{ $item['nama_kelas'] }}</td>
+                <td>{{ $item['kode_mk'] }}</td>
+                <td>{{ $item['nama_mk'] }}</td>
+                <td>{{ $item['nama_kelas'] }}</td>
                 <td>{{ $item['jumlah_peserta_kelas'] }}</td>
-                <td>{{ date('d-m-Y', strtotime($item['tgl_uts'])) }}</td>
-                <td>{{ date('d-m-Y', strtotime($item['tgl_uts'] . ' + 14 days')) }}</td>
-                <td>{{ date('d-m-Y', strtotime($item['tgl_pengisian_nilai'])) }}</td>
+                <!-- <td>{{ date('d-m-Y', strtotime($item['tgl_uts'])) }}</td> -->
+                <!-- <td>{{ date('d-m-Y', strtotime($item['tgl_uts'] . ' + 14 days')) }}</td> -->
+                <!-- <td>{{ date('d-m-Y', strtotime($item['tgl_pengisian_nilai'])) }}</td> -->
 
                 @if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'])
                     @if ($item['tgl_pengisian_nilai'] <= $item['batas_upload'])
                             <td>Tepat</td>
-                            <td>Rp {{ number_format($setting->bonus,0,',','.') }}</td>
-                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->bonus,0,',','.') }}</td>
-                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->bonus + $setting->honor_soal + $setting->honor_pengawas ,0,',','.') }}</td>
+                            <td>Rp {{ number_format($setting['honor_pembuat_soal'],0,',','.') }}</td>
+                            <td>Rp {{ number_format($item['bonus_tepat_mengajar'],0,',','.') }}</td>
+                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal,0,',','.') }}</td>
+                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal'],0,',','.') }}</td>
                         @else
                             <td>Terlambat</td>
-                            <td>Rp {{ number_format($setting->bonus_lewat,0,',','.') }}</td>
-                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->bonus_lewat,0,',','.') }}</td>
-                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->bonus_lewat + $setting->honor_soal + $setting->honor_pengawas ,0,',','.') }}</td>
+                            <td>Rp {{ number_format($setting['honor_pembuat_soal'],0,',','.') }}</td>
+                            <td>Rp {{ number_format($item['bonus_tepat_mengajar'],0,',','.') }}</td>
+                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat,0,',','.') }}</td>
+                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal'] ,0,',','.') }}</td>
                         @endif
                 @else
                     <td>Belum Upload</td>
+                    <td>Rp 0</td>
                     <td>Rp 0</td>
                     <td>Rp 0</td>
                     <td>Rp 0</td>

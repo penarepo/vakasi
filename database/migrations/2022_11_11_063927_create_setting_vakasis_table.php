@@ -19,9 +19,9 @@ class CreateSettingVakasisTable extends Migration
             $table->string('program')->nullable();
             $table->string('semester')->nullable();
             $table->integer('honor_soal')->nullable();
+            $table->integer('honor_soal_lewat')->nullable();
             $table->integer('honor_pengawas')->nullable();
-            $table->integer('bonus')->nullable();
-            $table->integer('bonus_lewat')->nullable();
+            $table->integer('honor_pembuat_soal')->nullable();
             $table->timestamps();
         });
     }
