@@ -81,40 +81,51 @@
     <table class="table table-striped table-sm mt-4">
         <thead>
             <tr class="table-primary text-center">
-                <th>Kode MK</th>
-                <th>Nama Mata Kuliah</th>
-                <th>Kelas</th>
-                <th>Jumlah Mhs</th>
+                <th rowspan="2">Kode MK</th>
+                <th rowspan="2">Nama Mata Kuliah</th>
+                <th rowspan="2">Kelas</th>
+                <th rowspan="2">Jumlah Mhs</th>
                 <!-- <th>Tgl Ujian</th> -->
                 <!-- <th>Batas Upload</th> -->
                 <!-- <th>Tgl Upload</th> -->
-                <th>Status</th>
-                <th>Honor Pembuatan Soal</th>
-                <th>Honor Tepat Mengajar</th>
-                <th>Honor Periksa Jawaban</th>
-                <th>Jumlah Total</th>
+                <th rowspan="2">Status</th>
+                <th colspan="3">Honor</th>
+                <th rowspan="2">Jumlah Total</th>
+            </tr>
+            <tr class="table-primary text-center">
+                <th>Pembuatan Soal</th>
+                <th>Tepat Mengajar</th>
+                <th>Periksa Jawaban</th>
             </tr>
         </thead>
         <tbody>
             @if (count($vakasi) != 0)
             @foreach ($vakasi as $item)
             <tr class="text-center">
-                <td>{{ $item['kode_mk'] }}</td>
+                <!-- <td>{{ $item['kode_mk'] }}</td>
                 <td>{{ $item['nama_mk'] }}</td>
                 <td>{{ $item['nama_kelas'] }}</td>
-                <td>{{ $item['jumlah_peserta_kelas'] }}</td>
+                <td>{{ $item['jumlah_peserta_kelas'] }}</td> -->
                 <!-- <td>{{ date('d-m-Y', strtotime($item['tgl_uts'])) }}</td> -->
                 <!-- <td>{{ date('d-m-Y', strtotime($item['tgl_uts'] . ' + 14 days')) }}</td> -->
                 <!-- <td>{{ date('d-m-Y', strtotime($item['tgl_pengisian_nilai'])) }}</td> -->
 
                 @if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'])
                     @if ($item['tgl_pengisian_nilai'] <= $item['batas_upload'])
+                            <td>{{ $item['kode_mk'] }}</td>
+                            <td>{{ $item['nama_mk'] }}</td>
+                            <td>{{ $item['nama_kelas'] }}</td>
+                            <td>{{ $item['jumlah_peserta_kelas'] }}</td>
                             <td>Tepat</td>
                             <td>Rp {{ number_format($setting['honor_pembuat_soal'],0,',','.') }}</td>
                             <td>Rp {{ number_format($item['bonus_tepat_mengajar'],0,',','.') }}</td>
                             <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal,0,',','.') }}</td>
                             <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal'],0,',','.') }}</td>
                         @else
+                            <td>{{ $item['kode_mk'] }}</td>
+                            <td>{{ $item['nama_mk'] }}</td>
+                            <td>{{ $item['nama_kelas'] }}</td>
+                            <td>{{ $item['jumlah_peserta_kelas'] }}</td>
                             <td>Terlambat</td>
                             <td>Rp {{ number_format($setting['honor_pembuat_soal'],0,',','.') }}</td>
                             <td>Rp {{ number_format($item['bonus_tepat_mengajar'],0,',','.') }}</td>
@@ -122,11 +133,15 @@
                             <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal'] ,0,',','.') }}</td>
                         @endif
                 @else
+                    <!-- <td>{{ $item['kode_mk'] }}</td>
+                    <td>{{ $item['nama_mk'] }}</td>
+                    <td>{{ $item['nama_kelas'] }}</td>
+                    <td>{{ $item['jumlah_peserta_kelas'] }}</td>
                     <td>Belum Upload</td>
                     <td>Rp 0</td>
                     <td>Rp 0</td>
                     <td>Rp 0</td>
-                    <td>Rp 0</td>
+                    <td>Rp 0</td> -->
                 @endif
             </tr>
             @endforeach

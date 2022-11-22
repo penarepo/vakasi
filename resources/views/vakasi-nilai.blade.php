@@ -115,6 +115,7 @@
                                 <th>Batas Upload</th>
                                 <th>Tgl Upload</th>
                                 <th>Status</th>
+                                <th>Status Pencairan</th>
                             </tr>
                         </thead>
                         <tbody id="list_mk"></tbody>

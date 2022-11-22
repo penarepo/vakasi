@@ -34,7 +34,8 @@ class CreateVakasiNilaisTable extends Migration
             $table->string('dosen_pengajar')->nullable();
             $table->string('nidn')->nullable();
             $table->string('prodi')->nullable();
-            $table->integer('bonus_tepat_mengajar')->nullable();
+            $table->integer('bonus_tepat_mengajar')->default('0');
+            $table->string('status_pencairan')->default('T');
             $table->timestamps();
         });
     }

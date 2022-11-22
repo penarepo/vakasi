@@ -80,6 +80,9 @@ $(document).ready(function () {
                                     data["tgl_pengisian_nilai"]
                                 }</td>
                                 <td class="text-center">${data["status"]}</td>
+                                <td class="text-center">${
+                                    data["status_pencairan"]
+                                }</td>
                             </tr>
                         `;
                         $("#list_mk").append(list);

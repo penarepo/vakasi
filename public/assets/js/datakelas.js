@@ -80,6 +80,14 @@ $(document).ready(function () {
                                 <option value="200000">Rp. 200.000</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="status_pencairan">Status Pencairan</label>
+                            <select class="form-control" name="status_pencairan" id="status_pencairan">
+                                <option selected value="${data["status_pencairan"]}">${data["status_pencairan"]}</option>
+                                <option value="Y">Ya</option>
+                                <option value="T">Tidak</option>
+                            </select>
+                        </div>
                         `;
                 document.getElementById("list_mk").innerHTML = list;
                 // $("#list_mk").innerHTML();
