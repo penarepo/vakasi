@@ -137,7 +137,7 @@ class VakasiNilaiController extends Controller
         $total = [];
         foreach ($vakasi as $item) {
             if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai']) {
-                if ($item['tgl_pengisian_nilai'] <= $item['batas_upload']) {
+                if ($item['tgl_pengisian_nilai'] <= $setting_vakasi['batas_upload']) {
                     $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
                 } else {
                     $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal_lewat) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];

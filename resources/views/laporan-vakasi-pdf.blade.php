@@ -111,7 +111,7 @@
                 <!-- <td>{{ date('d-m-Y', strtotime($item['tgl_pengisian_nilai'])) }}</td> -->
 
                 @if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'])
-                    @if ($item['tgl_pengisian_nilai'] <= $item['batas_upload'])
+                    @if ($item['tgl_pengisian_nilai'] <= $setting['batas_upload'])
                             <td>{{ $item['kode_mk'] }}</td>
                             <td>{{ $item['nama_mk'] }}</td>
                             <td>{{ $item['nama_kelas'] }}</td>
