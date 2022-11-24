@@ -156,7 +156,7 @@ class VakasiNilaiController extends Controller
 
         foreach ($vakasinew as $item) {
             $cetak = 0;
-            if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] == 0) {
+            if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] <= 2) {
                 $cetak = ($item['cetak'])+ 1;
                 if ($item['tgl_pengisian_nilai'] <= $item['batas_upload']) {
                     // $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
@@ -175,7 +175,7 @@ class VakasiNilaiController extends Controller
         $vakasilast = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
-            ->where('cetak','=','1')
+            ->where('cetak','=','2')
             ->where('tgl_pencairan', date('Y-m-d'))
             ->orderBy('nama_mk')
             ->get();
@@ -228,8 +228,14 @@ class VakasiNilaiController extends Controller
         $post = VakasiNilai::find($request->id);
         $post->tgl_pengisian_nilai    = $request->tgl_pengisian_nilai;
         $post->bonus_tepat_mengajar  = $request->bonus_tepat_mengajar;
-        $post->status_pencairan  = $request->status_pencairan;
-        $post->tgl_pencairan  = $request->tgl_pencairan;
+        if ($request->status_pencairan == "T") {
+            $post->status_pencairan  = $request->status_pencairan;
+            $post->tgl_pencairan  = null;
+            $post->cetak  = 0;
+        }else{
+            $post->status_pencairan  = $request->status_pencairan;
+            $post->tgl_pencairan  = $request->tgl_pencairan;
+        }
         $post->save();
 
         return redirect('data-kelas')->with(['sukses' => 'Data Berhasil Diubah!']);

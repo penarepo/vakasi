@@ -79,7 +79,7 @@
             @foreach ($vakasi as $item)
             <tr class="text-center">
 
-                @if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] == 1)
+                @if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] == 2)
                     @if ($item['tgl_pengisian_nilai'] <= $item['batas_upload'])
                         <td>{{ $item['kode_mk'] }}</td>
                         <td>{{ $item['nama_mk'] }}</td>
