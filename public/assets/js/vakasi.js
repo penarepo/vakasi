@@ -72,7 +72,6 @@ $(document).ready(function () {
                                 <td class="text-center">${
                                     data["jumlah_peserta_kelas"]
                                 }</td>
-                                <td class="text-center">${data["tgl_uts"]}</td>
                                 <td class="text-center">${
                                     data["batas_upload"]
                                 }</td>
@@ -80,6 +79,9 @@ $(document).ready(function () {
                                     data["tgl_pengisian_nilai"]
                                 }</td>
                                 <td class="text-center">${data["status"]}</td>
+                                <td class="text-center">${
+                                    data["tgl_pencairan"]
+                                }</td>
                                 <td class="text-center">${
                                     data["status_pencairan"]
                                 }</td>
@@ -99,7 +101,5 @@ $(document).ready(function () {
                 $("#detalMk").modal("show");
             },
         });
-
-        // window.open('/cetak-vakasi-nilai/' + data, '_blank');
     });
 });

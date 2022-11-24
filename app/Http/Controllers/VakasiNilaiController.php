@@ -58,7 +58,7 @@ class VakasiNilaiController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     // $rows = '<div class="text-center align-middle center"><a href="javascript:;" id="btnDetail" class="btn btn-sm btn-success btn-style rounded" data="' . $row['nip'] . '">Detail</a> <a href="/cetak-vakasi-nilai/' . $row['nip'] . '/' . $row['prodi'] . '" id="btnCetak" target="_blank" class="btn btn-sm btn-primary btn-style rounded">Cetak</a></div>';
-                    $rows = '<div class="text-center align-middle center"><a href="javascript:;" id="btnDetail" class="btn btn-sm btn-success btn-style rounded" data="' . $row['nip'] . '">Detail</a> <a href="/cetak-vakasi-nilai/' . $row['nip'] . '" id="btnCetak" target="_blank" class="btn btn-sm btn-primary btn-style rounded">Cetak</a></div>';
+                    $rows = '<div class="text-center align-middle center"><a href="javascript:;" id="btnDetail" class="btn btn-sm btn-success btn-style rounded" data="' . $row['nip'] . '">Detail</a> <a href="/cetak-vakasi-nilai/' . $row['nip'] . '" id="btnCetak" class="btn btn-sm btn-primary btn-style rounded">Cetak</a></div>';
                     return $rows;
                 })
                 ->rawColumns(['action'])
@@ -72,7 +72,7 @@ class VakasiNilaiController extends Controller
         //     ->groupBy('dosen_pengajar', 'nip', 'nidn','prodi')
         //     ->get();
         // $data = VakasiNilai::all();
-        $data = VakasiNilai::selectRaw('id, kode_mk, dosen_pengajar,nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, date_add(tgl_uts ,interval 14 day) as batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status')->get();
+        $data = VakasiNilai::selectRaw('id, kode_mk, dosen_pengajar,nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status')->get();
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -106,7 +106,7 @@ class VakasiNilaiController extends Controller
 
     public function mkVakasiNilai($id)
     {
-        $mk = VakasiNilai::selectRaw('nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, date_add(tgl_uts ,interval 14 day) as batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, status_pencairan')
+        $mk = VakasiNilai::selectRaw('nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, status_pencairan, tgl_pencairan')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->orderBy('nama_mk')
@@ -118,7 +118,7 @@ class VakasiNilaiController extends Controller
     public function cetakVakasiNilai($id)
     // public function cetakVakasiNilai($id, $prodi)
     {
-        $vakasi = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, date_add(tgl_uts ,interval 14 day) as batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar')
+        $vakasi = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->where('status_pencairan', '!=', "Y")
@@ -135,32 +135,83 @@ class VakasiNilaiController extends Controller
             ->first();
 
         $total = [];
+
         foreach ($vakasi as $item) {
             if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai']) {
-                if ($item['tgl_pengisian_nilai'] <= $setting_vakasi['batas_upload']) {
-                    $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
-                } else {
-                    $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal_lewat) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
-                }
-                // echo($item['id']);
-                $mk = VakasiNilai::find($item['id']);
-                // echo($mk);
-                $mk->status_pencairan = "Y";
-                $mk->save();
+                    VakasiNilai::where('id', $item['id'])
+                    ->update(['status_pencairan' => 'Y','tgl_pencairan'=> date('Y-m-d')]);
             } else {
-                $total[] = 0;
             }
         }
 
+        $vakasinew = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak')
+            ->where('nip', $id)
+            ->where('nama_mk', '!=', "Magang/KKN")
+            ->where('status_pencairan','Y')
+            ->where('tgl_pencairan', date('Y-m-d'))
+            ->orderBy('nama_mk')
+            ->get();
+
+        // print_r($total);
+
+        foreach ($vakasinew as $item) {
+            $cetak = 0;
+            if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] == 0) {
+                $cetak = ($item['cetak'])+ 1;
+                if ($item['tgl_pengisian_nilai'] <= $item['batas_upload']) {
+                    // $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
+                } else {
+                    // $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal_lewat) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
+                }  
+                VakasiNilai::where('id_kelas', $item['id_kelas'])->update(['cetak' => $cetak]);
+            } else {
+                // $total[] = 0;
+            }
+            // 
+        }
+
+        // $totalsementara = array_sum($total);
+
+        $vakasilast = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak')
+            ->where('nip', $id)
+            ->where('nama_mk', '!=', "Magang/KKN")
+            ->where('cetak','=','1')
+            ->where('tgl_pencairan', date('Y-m-d'))
+            ->orderBy('nama_mk')
+            ->get();
+
+        foreach ($vakasilast as $item) {
+            $cetak = 0;
+            if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] == 0) {
+                if ($item['tgl_pengisian_nilai'] <= $item['batas_upload']) {
+                    $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
+                } else {
+                    $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal_lewat) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
+                }  
+                VakasiNilai::where('id_kelas', $item['id_kelas'])->update(['cetak' => $cetak]);
+            } else {
+                $total[] = 0;
+            }
+            // 
+        }
+
+        $totalsementara = array_sum($total);
+
         $data = [
-            'vakasi' => $vakasi,
+            'vakasi' => $vakasilast,
             'setting' => $setting_vakasi,
-            'total' => array_sum($total),
+            'hasil' => $totalsementara,
             'data_dosen' => $data_dosen
         ];
 
+        $encodedSku = json_encode($data);
+
+        // print('<pre>');
+        // print_r($encodedSku);
+
+
         $pdf = PDF::loadview('laporan-vakasi-pdf', $data);
-        return $pdf->stream('laporan-vakasi-pdf');
+        return $pdf->download('laporan-vakasi-pdf.pdf');
     }
 
     public function dataKelas()
@@ -178,8 +229,54 @@ class VakasiNilaiController extends Controller
         $post->tgl_pengisian_nilai    = $request->tgl_pengisian_nilai;
         $post->bonus_tepat_mengajar  = $request->bonus_tepat_mengajar;
         $post->status_pencairan  = $request->status_pencairan;
+        $post->tgl_pencairan  = $request->tgl_pencairan;
         $post->save();
 
         return redirect('data-kelas')->with(['sukses' => 'Data Berhasil Diubah!']);
+    }
+
+    public function cetakResi($id,$total)
+    {
+        $vakasi = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar,cetak')
+            ->where('nip', $id)
+            ->where('nama_mk', '!=', "Magang/KKN")
+            ->where('cetak','1')
+            ->orderBy('nama_mk')
+            ->get();
+        
+        // echo($vakasi);
+
+        $setting_vakasi = SettingVakasi::where('prodi', 'like', "%all%")
+            ->first();
+
+        // echo('<br>');
+        // echo($setting_vakasi);
+
+        $data_dosen = VakasiNilai::select('dosen_pengajar', 'nip')
+            ->groupBy('dosen_pengajar', 'nip')
+            ->where('nip', $id)
+            ->first();
+
+        // echo('<br>');
+        // echo($data_dosen);
+
+        $data = [
+            'vakasi' => $vakasi,
+            'setting' => $setting_vakasi,
+            'total' => $total,
+            'data_dosen' => $data_dosen
+        ];
+
+        // echo('<br>');
+        // echo('<br>');
+
+        // //Convert array to json form...
+        // $encodedSku = json_encode($data);
+
+        // print('<pre>');
+        // print_r($encodedSku);
+
+        $pdf = PDF::loadview('laporan-vakasi-pdf', $data);
+        return $pdf->download('laporan-vakasi-pdf');
     }
 }

@@ -30,7 +30,8 @@
     <br>
     <br>
     <br>
-    <h4 class="text-center">BUKTI PENGAMBILAN VAKASI SOAL DAN KOREKSI NILAI</h4>
+    <h4 class="text-center">BUKTI PENGAMBILAN VAKASI SOAL</h4>
+    <h4 class="text-center">KOREKSI NILAI DAN INSENTIF</h4>
     <h4 class="text-center">UJIAN TENGAH SEMESTER</h4>
     <br>
     <br>
@@ -44,12 +45,6 @@
             <td>{{ $setting->semester }}</td>
         </tr>
         <tr>
-            <!-- <td><b>Vakasi Soal</b></td>
-            <td>:</td>
-            <td>Rp {{ number_format($setting->honor_soal,0,',','.') }}</td> -->
-            <!-- <td><b>Program Studi</b></td>
-            <td>:</td>
-            <td>{{ $setting->prodi }}</td> -->
             <td><b>Nama Dosen</b></td>
             <td>:</td>
             <td>{{ $data_dosen->dosen_pengajar }}</td>
@@ -57,25 +52,6 @@
             <td>:</td>
             <td>{{ $setting->program }}</td>
         </tr>
-        <!-- <tr>
-            <td><b>Nama Dosen</b></td>
-            <td>:</td>
-            <td>{{ $data_dosen->dosen_pengajar }}</td> -->
-            <!-- <td><b>Honor Pembuat Soal</b></td>
-            <td>:</td>
-            <td>Rp {{ number_format($setting->honor_pengawas,0,',','.') }}</td>
-            <td><b>Program</b></td>
-            <td>:</td>
-            <td>{{ $setting->program }}</td> -->
-        <!-- </tr> -->
-        <!-- <tr>
-            <td><b>Jumlah</b></td>
-            <td>:</td>
-            <td>Rp {{ number_format($setting->honor_soal + $setting->honor_pengawas ,0,',','.') }}</td>
-            <td><b>Nama Dosen</b></td>
-            <td>:</td>
-            <td>{{ $data_dosen->dosen_pengajar }}</td>
-        </tr> -->
     </table>
 
     <table class="table table-striped table-sm mt-4">
@@ -85,9 +61,6 @@
                 <th rowspan="2">Nama Mata Kuliah</th>
                 <th rowspan="2">Kelas</th>
                 <th rowspan="2">Jumlah Mhs</th>
-                <!-- <th>Tgl Ujian</th> -->
-                <!-- <th>Batas Upload</th> -->
-                <!-- <th>Tgl Upload</th> -->
                 <th rowspan="2">Status</th>
                 <th colspan="3">Honor</th>
                 <th rowspan="2">Jumlah Total</th>
@@ -99,41 +72,43 @@
             </tr>
         </thead>
         <tbody>
+            @php
+            $totalakhir = 0
+            @endphp
             @if (count($vakasi) != 0)
             @foreach ($vakasi as $item)
             <tr class="text-center">
-                <!-- <td>{{ $item['kode_mk'] }}</td>
-                <td>{{ $item['nama_mk'] }}</td>
-                <td>{{ $item['nama_kelas'] }}</td>
-                <td>{{ $item['jumlah_peserta_kelas'] }}</td> -->
-                <!-- <td>{{ date('d-m-Y', strtotime($item['tgl_uts'])) }}</td> -->
-                <!-- <td>{{ date('d-m-Y', strtotime($item['tgl_uts'] . ' + 14 days')) }}</td> -->
-                <!-- <td>{{ date('d-m-Y', strtotime($item['tgl_pengisian_nilai'])) }}</td> -->
 
-                @if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'])
-                    @if ($item['tgl_pengisian_nilai'] <= $setting['batas_upload'])
-                            <td>{{ $item['kode_mk'] }}</td>
-                            <td>{{ $item['nama_mk'] }}</td>
-                            <td>{{ $item['nama_kelas'] }}</td>
-                            <td>{{ $item['jumlah_peserta_kelas'] }}</td>
-                            <td>Tepat</td>
-                            <td>Rp {{ number_format($setting['honor_pembuat_soal'],0,',','.') }}</td>
-                            <td>Rp {{ number_format($item['bonus_tepat_mengajar'],0,',','.') }}</td>
-                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal,0,',','.') }}</td>
-                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal'],0,',','.') }}</td>
-                        @else
-                            <td>{{ $item['kode_mk'] }}</td>
-                            <td>{{ $item['nama_mk'] }}</td>
-                            <td>{{ $item['nama_kelas'] }}</td>
-                            <td>{{ $item['jumlah_peserta_kelas'] }}</td>
-                            <td>Terlambat</td>
-                            <td>Rp {{ number_format($setting['honor_pembuat_soal'],0,',','.') }}</td>
-                            <td>Rp {{ number_format($item['bonus_tepat_mengajar'],0,',','.') }}</td>
-                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat,0,',','.') }}</td>
-                            <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal'] ,0,',','.') }}</td>
-                        @endif
+                @if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] == 1)
+                    @if ($item['tgl_pengisian_nilai'] <= $item['batas_upload'])
+                        <td>{{ $item['kode_mk'] }}</td>
+                        <td>{{ $item['nama_mk'] }}</td>
+                        <td>{{ $item['nama_kelas'] }}</td>
+                        <td>{{ $item['jumlah_peserta_kelas'] }}</td>
+                        <td>Tepat</td>
+                        <td>Rp {{ number_format($setting['honor_pembuat_soal'],0,',','.') }}</td>
+                        <td>Rp {{ number_format($item['bonus_tepat_mengajar'],0,',','.') }}</td>
+                        <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal,0,',','.') }}</td>
+                        <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal'],0,',','.') }}</td>
+                        @php
+                        $totalakhir += ($item['jumlah_peserta_kelas'] * $setting->honor_soal) + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal']
+                        @endphp
+                    @else
+                        <td>{{ $item['kode_mk'] }}</td>
+                        <td>{{ $item['nama_mk'] }}</td>
+                        <td>{{ $item['nama_kelas'] }}</td>
+                        <td>{{ $item['jumlah_peserta_kelas'] }}</td>
+                        <td>Terlambat</td>
+                        <td>Rp {{ number_format($setting['honor_pembuat_soal'],0,',','.') }}</td>
+                        <td>Rp {{ number_format($item['bonus_tepat_mengajar'],0,',','.') }}</td>
+                        <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat,0,',','.') }}</td>
+                        <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal'] ,0,',','.') }}</td>
+                        @php
+                        $totalakhir += ($item['jumlah_peserta_kelas'] * $setting->honor_soal) + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal']
+                        @endphp
+                    @endif
                 @else
-                    <!-- <td>{{ $item['kode_mk'] }}</td>
+                    <td>{{ $item['kode_mk'] }}</td>
                     <td>{{ $item['nama_mk'] }}</td>
                     <td>{{ $item['nama_kelas'] }}</td>
                     <td>{{ $item['jumlah_peserta_kelas'] }}</td>
@@ -141,13 +116,14 @@
                     <td>Rp 0</td>
                     <td>Rp 0</td>
                     <td>Rp 0</td>
-                    <td>Rp 0</td> -->
+                    <td>Rp 0</td>
                 @endif
             </tr>
             @endforeach
+
             <tr class="text-center">
                 <td colspan="8"><b>Total</b></td>
-                <td><b>Rp {{ number_format($total,0,',','.') }}</b></td>
+                <td><b>Rp {{ number_format($totalakhir,0,',','.') }}</b></td>
             </tr>
                   
             @else

@@ -36,6 +36,9 @@ class CreateVakasiNilaisTable extends Migration
             $table->string('prodi')->nullable();
             $table->integer('bonus_tepat_mengajar')->default('0');
             $table->string('status_pencairan')->default('T');
+            $table->date('tgl_pencairan')->nullable();
+            $table->dateTime('batas_upload')->default('2022-12-03 23:59:09');
+            $table->integer('cetak')->default('0');
             $table->timestamps();
         });
     }

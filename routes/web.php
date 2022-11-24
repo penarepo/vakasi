@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [VakasiNilaiController::class, 'index']);
+Route::get('/cetak-resi/{id}/{$total}', [VakasiNilaiController::class, 'cetakResi']);
 Route::post('/import-excel', [VakasiNilaiController::class, 'importExcel']);
 Route::get('/vakasi-nilai', [VakasiNilaiController::class, 'getVakasiNilai']);
 Route::get('/data-kelas-all', [VakasiNilaiController::class, 'getDataKelas']);
@@ -24,3 +25,5 @@ Route::get('/cetak-vakasi-nilai/{id}', [VakasiNilaiController::class, 'cetakVaka
 // Route::get('/cetak-vakasi-nilai/{id}/{prodi}', [VakasiNilaiController::class, 'cetakVakasiNilai']);
 Route::get('/mk-vakasi-nilai/{id}', [VakasiNilaiController::class, 'mkVakasiNilai']);
 Route::get('/data-kelas', [VakasiNilaiController::class, 'dataKelas']);
+// Route::get('/lalalala', [VakasiNilaiController::class, 'lalalala']);
+

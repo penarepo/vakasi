@@ -88,13 +88,15 @@ $(document).ready(function () {
                                 <option value="T">Tidak</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                        <label for="tgl_pencairan" class="col-form-label">Tanggal Pencairan:</label>
+                        <input type="date" class="form-control" value="${data["tgl_pencairan"]}" name="tgl_pencairan">
+                        </div>
                         `;
                 document.getElementById("list_mk").innerHTML = list;
                 // $("#list_mk").innerHTML();
                 $("#detalMk").modal("show");
             },
         });
-
-        // window.open('/cetak-vakasi-nilai/' + data, '_blank');
     });
 });

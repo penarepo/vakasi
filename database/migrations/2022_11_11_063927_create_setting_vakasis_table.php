@@ -22,7 +22,6 @@ class CreateSettingVakasisTable extends Migration
             $table->integer('honor_soal_lewat')->nullable();
             $table->integer('honor_pengawas')->nullable();
             $table->integer('honor_pembuat_soal')->nullable();
-            $table->integer('batas_upload')->nullable();
             $table->timestamps();
         });
     }

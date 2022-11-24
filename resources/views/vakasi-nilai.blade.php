@@ -111,10 +111,10 @@
                                 <th>No</th>
                                 <th>Nama MK</th>
                                 <th>Jumlah Mhs</th>
-                                <th>Tgl Ujian</th>
                                 <th>Batas Upload</th>
                                 <th>Tgl Upload</th>
                                 <th>Status</th>
+                                <th>Tgl Pencairan</th>
                                 <th>Status Pencairan</th>
                             </tr>
                         </thead>
