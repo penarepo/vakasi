@@ -72,7 +72,7 @@ class VakasiNilaiController extends Controller
         //     ->groupBy('dosen_pengajar', 'nip', 'nidn','prodi')
         //     ->get();
         // $data = VakasiNilai::all();
-        $data = VakasiNilai::selectRaw('id, kode_mk, dosen_pengajar,nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status')->get();
+        $data = VakasiNilai::selectRaw('id, kode_mk, dosen_pengajar,nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status')->get();
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -95,7 +95,7 @@ class VakasiNilaiController extends Controller
 
     // public function mkdetail($id)
     // {
-    //     $mk = VakasiNilai::selectRaw('nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, date_add(tgl_uts ,interval 14 day) as batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status')
+    //     $mk = VakasiNilai::selectRaw('nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status')
     //         ->where('nip', $id)
     //         ->where('nama_mk', '!=', "Magang/KKN")
     //         ->orderBy('nama_mk')
@@ -106,7 +106,7 @@ class VakasiNilaiController extends Controller
 
     public function mkVakasiNilai($id)
     {
-        $mk = VakasiNilai::selectRaw('nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, status_pencairan, tgl_pencairan')
+        $mk = VakasiNilai::selectRaw('nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, status_pencairan, tgl_pencairan')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->orderBy('nama_mk')
@@ -118,7 +118,7 @@ class VakasiNilaiController extends Controller
     public function cetakVakasiNilai($id)
     // public function cetakVakasiNilai($id, $prodi)
     {
-        $vakasi = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar')
+        $vakasi = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->where('status_pencairan', '!=', "Y")
@@ -144,7 +144,7 @@ class VakasiNilaiController extends Controller
             }
         }
 
-        $vakasinew = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak')
+        $vakasinew = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->where('status_pencairan','Y')
@@ -167,13 +167,13 @@ class VakasiNilaiController extends Controller
             } else {
                 // $total[] = 0;
             }
-            
+
             // 
         }
 
         // $totalsementara = array_sum($total);
 
-        $vakasilast = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak')
+        $vakasilast = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->where('cetak','=','1')
@@ -244,7 +244,7 @@ class VakasiNilaiController extends Controller
 
     public function cetakResi($id,$total)
     {
-        $vakasi = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= date_add(tgl_uts ,interval 14 DAY),"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar,cetak')
+        $vakasi = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar,cetak')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->where('cetak','1')
