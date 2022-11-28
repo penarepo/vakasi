@@ -189,6 +189,7 @@
                 @endphp
                 <td class="text-right"><b>Rp {{ number_format($totalkeseluruhan,0,',','.') }}</b></td>
             </tr>
+            <br>
               
             @else
             <tr class="text-center">
