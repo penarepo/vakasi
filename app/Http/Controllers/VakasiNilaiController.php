@@ -154,7 +154,7 @@ class VakasiNilaiController extends Controller
 
         foreach ($vakasinew as $item) {
             $cetak = 0;
-            if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] <= 2) {
+            if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] <= 1) {
                 $cetak = ($item['cetak'])+ 1;
                 $status_bonus = ($item['status_bonus_soal']) + 1;
                 // echo($item['status_bonus_soal']);
@@ -170,7 +170,7 @@ class VakasiNilaiController extends Controller
         $vakasilast = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak, status_bonus_soal')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
-            ->where('cetak','=','2')
+            ->where('cetak','=','1')
             ->where('tgl_pencairan', date('Y-m-d'))
             ->orderBy('nama_mk')
             ->get();

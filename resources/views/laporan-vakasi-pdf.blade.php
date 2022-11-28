@@ -79,7 +79,7 @@
             @foreach ($vakasi as $item)
             <tr class="text-center">
 
-                @if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] <= 2)
+                @if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] <= 1)
                     @if ($item['tgl_pengisian_nilai'] <= $item['batas_upload'])
                         <td>{{ $item['kode_mk'] }}</td>
                         <td>{{ $item['nama_mk'] }}</td>
@@ -158,7 +158,7 @@
             @if (count($vakasi) != 0)
             @foreach ($vakasi as $item)
 
-                @if (($item['kode_mk'] != $temp_item || $temp_item == "0") && $item['status_bonus_soal'] <= 2)
+                @if (($item['kode_mk'] != $temp_item || $temp_item == "0") && $item['status_bonus_soal'] <= 1)
                     <tr class="text-center">
                         <td>{{ $item['kode_mk'] }}</td>
                         <td colspan="6">{{ $item['nama_mk'] }}</td>
