@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 use PDF;
+use DB;
 
 class VakasiNilaiController extends Controller
 {
@@ -17,7 +18,7 @@ class VakasiNilaiController extends Controller
     public function index()
     {
         $data = [
-            'data_vakasi' => VakasiNilai::paginate(10)
+            'data_vakasi' => VakasiNilai::paginate(15)
         ];
 
         return view('vakasi-nilai', $data);
@@ -125,7 +126,6 @@ class VakasiNilaiController extends Controller
             ->orderBy('nama_mk')
             ->get();
 
-        // $setting_vakasi = SettingVakasi::where('prodi', 'like', "%" . $prodi . "%")
         $setting_vakasi = SettingVakasi::where('prodi', 'like', "%all%")
             ->first();
 
@@ -144,7 +144,7 @@ class VakasiNilaiController extends Controller
             }
         }
 
-        $vakasinew = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak')
+        $vakasinew = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak, status_bonus_soal')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->where('status_pencairan','Y')
@@ -152,44 +152,38 @@ class VakasiNilaiController extends Controller
             ->orderBy('nama_mk')
             ->get();
 
-        // print_r($total);
-
         foreach ($vakasinew as $item) {
             $cetak = 0;
-            if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] <= 1) {
+            if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] <= 2) {
                 $cetak = ($item['cetak'])+ 1;
-                if ($item['tgl_pengisian_nilai'] <= $item['batas_upload']) {
-                    // $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
-                } else {
-                    // $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal_lewat) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
-                }  
+                $status_bonus = ($item['status_bonus_soal']) + 1;
+                // echo($item['status_bonus_soal']);
                 VakasiNilai::where('id_kelas', $item['id_kelas'])->update(['cetak' => $cetak]);
+                VakasiNilai::where('nip', $id)->where('kode_mk',$item['kode_mk'])->update(['status_bonus_soal' => $status_bonus]);
             } else {
-                // $total[] = 0;
             }
 
-            // 
         }
 
         // $totalsementara = array_sum($total);
 
-        $vakasilast = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak')
+        $vakasilast = VakasiNilai::selectRaw('id, nip, periode, id_kelas, kode_mk, nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, bonus_tepat_mengajar, cetak, status_bonus_soal')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
-            ->where('cetak','=','1')
+            ->where('cetak','=','2')
             ->where('tgl_pencairan', date('Y-m-d'))
             ->orderBy('nama_mk')
             ->get();
 
         foreach ($vakasilast as $item) {
-            $cetak = 0;
+            // $cetak = 0;
             if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] == 0) {
                 if ($item['tgl_pengisian_nilai'] <= $item['batas_upload']) {
                     $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
                 } else {
                     $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal_lewat) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
                 }  
-                VakasiNilai::where('id_kelas', $item['id_kelas'])->update(['cetak' => $cetak]);
+                // VakasiNilai::where('id_kelas', $item['id_kelas'])->update(['cetak' => $cetak]);
             } else {
                 $total[] = 0;
             }
@@ -197,19 +191,13 @@ class VakasiNilaiController extends Controller
         }
 
         $totalsementara = array_sum($total);
-
         $data = [
             'vakasi' => $vakasilast,
+            // 'vakasibonus' => $vakasibonus,
             'setting' => $setting_vakasi,
             'hasil' => $totalsementara,
             'data_dosen' => $data_dosen
         ];
-
-        $encodedSku = json_encode($data);
-
-        // print('<pre>');
-        // print_r($encodedSku);
-
 
         $pdf = PDF::loadview('laporan-vakasi-pdf', $data);
         return $pdf->download('laporan-vakasi-pdf.pdf');
@@ -218,7 +206,7 @@ class VakasiNilaiController extends Controller
     public function dataKelas()
     {
         $data = [
-            'data_vakasi' => VakasiNilai::paginate(10)
+            'data_vakasi' => VakasiNilai::paginate(15)
         ];
 
         return view('data-kelas', $data);
