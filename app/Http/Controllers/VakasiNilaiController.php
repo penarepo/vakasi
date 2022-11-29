@@ -110,7 +110,7 @@ class VakasiNilaiController extends Controller
         $mk = VakasiNilai::selectRaw('nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, status_pencairan, tgl_pencairan')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
-            ->orderBy('nama_mk')
+            ->orderBy('kode_mk')
             ->get();
 
         return response()->json($mk);
@@ -123,7 +123,7 @@ class VakasiNilaiController extends Controller
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->where('status_pencairan', '!=', "Y")
-            ->orderBy('nama_mk')
+            ->orderBy('kode_mk')
             ->get();
 
         $setting_vakasi = SettingVakasi::where('prodi', 'like', "%all%")
@@ -149,7 +149,7 @@ class VakasiNilaiController extends Controller
             ->where('nama_mk', '!=', "Magang/KKN")
             ->where('status_pencairan','Y')
             ->where('tgl_pencairan', date('Y-m-d'))
-            ->orderBy('nama_mk')
+            ->orderBy('kode_mk')
             ->get();
 
         foreach ($vakasinew as $item) {
@@ -172,7 +172,7 @@ class VakasiNilaiController extends Controller
             ->where('nama_mk', '!=', "Magang/KKN")
             ->where('cetak','=','1')
             ->where('tgl_pencairan', date('Y-m-d'))
-            ->orderBy('nama_mk')
+            ->orderBy('kode_mk')
             ->get();
 
         foreach ($vakasilast as $item) {
@@ -236,7 +236,7 @@ class VakasiNilaiController extends Controller
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->where('cetak','1')
-            ->orderBy('nama_mk')
+            ->orderBy('kode_mk')
             ->get();
         
         // echo($vakasi);
