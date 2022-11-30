@@ -179,9 +179,9 @@ class VakasiNilaiController extends Controller
             // $cetak = 0;
             if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] == 0) {
                 if ($item['tgl_pengisian_nilai'] <= $item['batas_upload']) {
-                    $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
+                    $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal) + $item['bonus_tepat_mengajar'];
                 } else {
-                    $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal_lewat) + $item['bonus_tepat_mengajar'] + $setting_vakasi['honor_pembuat_soal'];
+                    $total[] = ($item['jumlah_peserta_kelas'] * $setting_vakasi->honor_soal_lewat) + $item['bonus_tepat_mengajar'];
                 }  
                 // VakasiNilai::where('id_kelas', $item['id_kelas'])->update(['cetak' => $cetak]);
             } else {

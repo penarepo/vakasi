@@ -89,9 +89,9 @@
                         <!-- <td>Rp {{ number_format($setting['honor_pembuat_soal'],0,',','.') }}</td> -->
                         <td>Rp {{ number_format($item['bonus_tepat_mengajar'],0,',','.') }}</td>
                         <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal,0,',','.') }}</td>
-                        <td class="text-right">Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal'],0,',','.') }}</td>
+                        <td class="text-right">Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal + $item['bonus_tepat_mengajar'],0,',','.') }}</td>
                         @php
-                        $totalakhir += ($item['jumlah_peserta_kelas'] * $setting->honor_soal) + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal']
+                        $totalakhir += ($item['jumlah_peserta_kelas'] * $setting->honor_soal) + $item['bonus_tepat_mengajar']
                         @endphp
                     @else
                         <td>{{ $item['kode_mk'] }}</td>
@@ -102,9 +102,9 @@
                         <!-- <td>Rp {{ number_format($setting['honor_pembuat_soal'],0,',','.') }}</td> -->
                         <td>Rp {{ number_format($item['bonus_tepat_mengajar'],0,',','.') }}</td>
                         <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat,0,',','.') }}</td>
-                        <td class="text-right">Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal'] ,0,',','.') }}</td>
+                        <td class="text-right">Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat + $item['bonus_tepat_mengajar'],0,',','.') }}</td>
                         @php
-                        $totalakhir += ($item['jumlah_peserta_kelas'] * $setting->honor_soal) + $item['bonus_tepat_mengajar'] + $setting['honor_pembuat_soal']
+                        $totalakhir += ($item['jumlah_peserta_kelas'] * $setting->honor_soal) + $item['bonus_tepat_mengajar']
                         @endphp
                     @endif
                 @else
