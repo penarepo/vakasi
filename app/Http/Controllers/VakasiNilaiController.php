@@ -154,7 +154,7 @@ class VakasiNilaiController extends Controller
 
         foreach ($vakasinew as $item) {
             $cetak = 0;
-            if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] <= 1) {
+            if ($item['tgl_uts'] <= $item['tgl_pengisian_nilai'] && $item['cetak'] <=1) {
                 $cetak = ($item['cetak'])+ 1;
                 $status_bonus = ($item['status_bonus_soal']) + 1;
                 // echo($item['status_bonus_soal']);
