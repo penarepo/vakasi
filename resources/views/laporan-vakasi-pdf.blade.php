@@ -104,7 +104,7 @@
                         <td>Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat,0,',','.') }}</td>
                         <td class="text-right">Rp {{ number_format($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat + $item['bonus_tepat_mengajar'],0,',','.') }}</td>
                         @php
-                        $totalakhir += ($item['jumlah_peserta_kelas'] * $setting->honor_soal) + $item['bonus_tepat_mengajar']
+                        $totalakhir += ($item['jumlah_peserta_kelas'] * $setting->honor_soal_lewat) + $item['bonus_tepat_mengajar']
                         @endphp
                     @endif
                 @else

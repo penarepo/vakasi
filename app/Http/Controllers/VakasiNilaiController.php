@@ -59,7 +59,7 @@ class VakasiNilaiController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     // $rows = '<div class="text-center align-middle center"><a href="javascript:;" id="btnDetail" class="btn btn-sm btn-success btn-style rounded" data="' . $row['nip'] . '">Detail</a> <a href="/cetak-vakasi-nilai/' . $row['nip'] . '/' . $row['prodi'] . '" id="btnCetak" target="_blank" class="btn btn-sm btn-primary btn-style rounded">Cetak</a></div>';
-                    $rows = '<div class="text-center align-middle center"><a href="javascript:;" id="btnDetail" class="btn btn-sm btn-success btn-style rounded" data="' . $row['nip'] . '">Detail</a> <a href="/cetak-vakasi-nilai/' . $row['nip'] . '" id="btnCetak" class="btn btn-sm btn-primary btn-style rounded">Cetak</a></div>';
+                    $rows = '<div class="text-center align-middle center"><a href="javascript:;" id="btnDetail" class="btn btn-sm btn-success btn-style rounded" data="' . $row['nip'] . '">Detail</a> </div>';
                     return $rows;
                 })
                 ->rawColumns(['action'])
@@ -107,7 +107,7 @@ class VakasiNilaiController extends Controller
 
     public function mkVakasiNilai($id)
     {
-        $mk = VakasiNilai::selectRaw('nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, status_pencairan, tgl_pencairan')
+        $mk = VakasiNilai::selectRaw('nama_mk, nama_kelas, jumlah_peserta_kelas, tgl_uts, CAST(tgl_pengisian_nilai as date) AS tgl_pengisian_nilai, batas_upload, if(tgl_uts <= CAST(tgl_pengisian_nilai as DATE), if(CAST(tgl_pengisian_nilai as DATE) <= batas_upload,"Tepat","Telat"),"Belum Upload") AS status, status_pencairan, tgl_pencairan, bonus_tepat_mengajar')
             ->where('nip', $id)
             ->where('nama_mk', '!=', "Magang/KKN")
             ->orderBy('kode_mk')
@@ -221,6 +221,7 @@ class VakasiNilaiController extends Controller
             $post->status_pencairan  = $request->status_pencairan;
             $post->tgl_pencairan  = null;
             $post->cetak  = 0;
+            $post->status_bonus_soal = 0;
         }else{
             $post->status_pencairan  = $request->status_pencairan;
             $post->tgl_pencairan  = $request->tgl_pencairan;
